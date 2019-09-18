@@ -1,4 +1,4 @@
-  /*                                                                     
+/*                                                                     
 ,-.----.                                                            
 \    /  \  ,-.----.       ,---,               .---.           .---. 
 |   :    \ \    /  \    .'  .' `\            /. ./|          /. ./| 
@@ -30,6 +30,9 @@
 
 #define SPEED 255 //motor in 
 
+#include <Servo.h>  
+Servo ServoR;
+Servo ServoL;
 
 void setup() 
 {
@@ -46,26 +49,31 @@ void setup()
   pinMode(LFSensor_4,INPUT_PULLUP);
   pinMode(A5,INPUT_PULLUP);
   Serial.begin(115200);
+
+  ServoR.attach(12);
+  ServoL.attach(13);
 }
 
 void SetMotorL(int signedPower){ // signed power from -255 to 255
   if(signedPower < 0){
     analogWrite(LeftDirectPin1, abs(signedPower));
     analogWrite(LeftDirectPin2, 0);
-  }else{
+}
+  else{
     analogWrite(LeftDirectPin1, 0);
     analogWrite(LeftDirectPin2, abs(signedPower));
-  }
+}
 }
 
 void SetMotorR(int signedPower){ // signed power from -255 to 255
   if(signedPower < 0){
     analogWrite(RightDirectPin1, abs(signedPower));
     analogWrite(RightDirectPin2, 0);
-  }else{
+}
+  else{
     analogWrite(RightDirectPin1, 0);
     analogWrite(RightDirectPin2, abs(signedPower));
-  }
+}
 }
 
 void SetMotorY(int signedPower){
@@ -89,12 +97,30 @@ void loop()
     delay(500);
     SetMotorZ(-255);
     delay(600);
-  }else if(analogRead(A3) > 500){
+}
+  else if(analogRead(A3) > 500){
     SetMotorR(200);
-  }else{
+}
+  else{
     SetMotorL(200);
-  }
+}
   delay(10);
+}
+
+{
+   // When T shape is reached and no more black tape in front, make servo go down 90 degrees 
+    if(analogRead(A2) < 500 && analogRead(A3) < 500 && analogRead(A4) < 500){
+    delay(500);
+    ServoR.write(90); 
+    ServoL.write(-90); 
+    delay(1000); 
+}
+ 
+  // When box is reached, make servo go up 90 degrees 
+   else(analogRead(A3) > 500){
+    ServoR.write(-90);
+    ServoL.write(90);
+    delay(1000);
 }
 
 /*

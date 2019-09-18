@@ -52,6 +52,8 @@ void setup()
 
   ServoR.attach(12);
   ServoL.attach(13);
+
+  
 }
 
 void SetMotorL(int signedPower){ // signed power from -255 to 255
@@ -87,6 +89,37 @@ void SetMotorZ(int signedPower){
 }
 
 
+//count refers to the number of times when the robot encounters a T shape, count=0 refers to the first time, count=1 refers to the second time
+void ServoR(int count){ // count from 0 to 1
+  if(analogRead(A3) > 500){
+    SetMotorR(0);
+    SetMotorL(0);
+}
+}
+void ServoL(int count){ // count from 0 to 1
+  if(analogRead(A3) > 500){
+    SetMotorR(0);
+    SetMotorL(0);
+}
+}
+
+
+void RitzBoxDown (int count){
+ if count=0
+ ServoR.write(90); 
+ ServoL.write(-90); 
+ delay(1000); 
+}
+}
+
+void RitzBoxUp (int count){
+ if count=1
+ ServoR.write(-90); 
+ ServoL.write(90); 
+ delay(1000); 
+}
+}
+
 void loop()
 {
   //String debugstr = String(analogRead(A0)) + ", " + String(analogRead(A1)) + ", " + String(analogRead(A2)) + ", " + String(analogRead(A3)) + ", " + String(analogRead(A4)) + ", " + String(analogRead(A5));
@@ -107,21 +140,6 @@ void loop()
   delay(10);
 }
 
-{
-   // When T shape is reached and no more black tape in front, make servo go down 90 degrees 
-    if(analogRead(A2) < 500 && analogRead(A3) < 500 && analogRead(A4) < 500){
-    delay(500);
-    ServoR.write(90); 
-    ServoL.write(-90); 
-    delay(1000); 
-}
- 
-  // When box is reached, make servo go up 90 degrees 
-   else(analogRead(A3) > 500){
-    ServoR.write(-90);
-    ServoL.write(90);
-    delay(1000);
-}
 
 /*
   SetMotorY(255);

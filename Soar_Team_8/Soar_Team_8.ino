@@ -1,4 +1,4 @@
-/*                                                                     
+ /*                                                                     
 ,-.----.                                                            
 \    /  \  ,-.----.       ,---,               .---.           .---. 
 |   :    \ \    /  \    .'  .' `\            /. ./|          /. ./| 
@@ -28,11 +28,15 @@
 #define LFSensor_3 A3 
 #define LFSensor_4 A4
 
+#define RitzUp 50
+#define RitzDown 180
+
 #define SPEED 255 //motor in 
 
-#include <Servo.h>  
+#include <Servo.h>
 Servo ServoR;
 Servo ServoL;
+
 
 void setup() 
 {
@@ -50,32 +54,36 @@ void setup()
   pinMode(A5,INPUT_PULLUP);
   Serial.begin(115200);
 
-  ServoR.attach(12);
-  ServoL.attach(13);
+  ServoR.attach (12);
+  ServoL.attach (13);
 
-  
-}
+  delay(2000);
+  RitzBoxAngle(RitzUp);
+  delay(2000);
+  RitzBoxAngle(RitzDown);
+  delay(2000);
+
+  MoveYuntilT(255);
+  }
 
 void SetMotorL(int signedPower){ // signed power from -255 to 255
   if(signedPower < 0){
     analogWrite(LeftDirectPin1, abs(signedPower));
     analogWrite(LeftDirectPin2, 0);
-}
-  else{
+  }else{
     analogWrite(LeftDirectPin1, 0);
     analogWrite(LeftDirectPin2, abs(signedPower));
-}
+  }
 }
 
 void SetMotorR(int signedPower){ // signed power from -255 to 255
   if(signedPower < 0){
     analogWrite(RightDirectPin1, abs(signedPower));
     analogWrite(RightDirectPin2, 0);
-}
-  else{
+  }else{
     analogWrite(RightDirectPin1, 0);
     analogWrite(RightDirectPin2, abs(signedPower));
-}
+  }
 }
 
 void SetMotorY(int signedPower){
@@ -88,39 +96,7 @@ void SetMotorZ(int signedPower){
   SetMotorR(-1*signedPower);
 }
 
-
-//count refers to the number of times when the robot encounters a T shape, count=0 refers to the first time, count=1 refers to the second time
-void ServoR(int count){ // count from 0 to 1
-  if(analogRead(A3) > 500){
-    SetMotorR(0);
-    SetMotorL(0);
-}
-}
-void ServoL(int count){ // count from 0 to 1
-  if(analogRead(A3) > 500){
-    SetMotorR(0);
-    SetMotorL(0);
-}
-}
-
-
-void RitzBoxDown (int count){
- if count=0
- ServoR.write(90); 
- ServoL.write(-90); 
- delay(1000); 
-}
-}
-
-void RitzBoxUp (int count){
- if count=1
- ServoR.write(-90); 
- ServoL.write(90); 
- delay(1000); 
-}
-}
-
-void loop()
+void linetracking()
 {
   //String debugstr = String(analogRead(A0)) + ", " + String(analogRead(A1)) + ", " + String(analogRead(A2)) + ", " + String(analogRead(A3)) + ", " + String(analogRead(A4)) + ", " + String(analogRead(A5));
   //Serial.println(debugstr);
@@ -130,16 +106,29 @@ void loop()
     delay(500);
     SetMotorZ(-255);
     delay(600);
-}
-  else if(analogRead(A3) > 500){
+  }else if(analogRead(A3) > 500){
     SetMotorR(200);
-}
-  else{
+  }else{
     SetMotorL(200);
-}
+  }
   delay(10);
 }
 
+void RitzBoxAngle(int deg){
+  ServoL.write(deg);
+  ServoR.write(180-deg);
+}
+
+void MoveYuntilT(int spd){
+  SetMotorY(spd);
+  while (!(analogRead(A2) < 500 && analogRead(A3) < 500 && analogRead(A4) < 500)){}
+  SetMotorY(0);
+  
+ 
+}
+
+void loop(){} 
+  
 
 /*
   SetMotorY(255);

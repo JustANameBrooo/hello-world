@@ -28,6 +28,7 @@
 #define LFSensor_3 A3 
 #define LFSensor_4 A4
 
+
 #define RitzUp 50
 #define RitzDown 180
 
@@ -36,6 +37,9 @@
 #include <Servo.h>
 Servo ServoR;
 Servo ServoL;
+
+void RitzBoxAngle(int deg);
+void MoveYuntilT(int spd);
 
 
 void setup() 
@@ -54,19 +58,23 @@ void setup()
   pinMode(A5,INPUT_PULLUP);
   Serial.begin(115200);
 
-
-  linetracking(255);
+  linetracking(230);
+  MoveYuntilT(255);
 
   ServoR.attach (12);
   ServoL.attach (13);
-
+ 
   delay(2000);
   RitzBoxAngle(RitzUp);
   delay(2000);
   RitzBoxAngle(RitzDown);
   delay(2000);
-
+  
+  linetracking(230);
   MoveYuntilT(255);
+
+
+
   }
 
 void SetMotorL(int signedPower){ // signed power from -255 to 255
@@ -105,12 +113,16 @@ void SetMotorZ(int signedPower){
 
 
 void linetracking(int spd){
- if (analogRead(A3) < 500) {
- SetMotorY(spd);
-}
- else{
- SetMotorZ(spd);
-}
+  while (!(analogRead(A2) < 500 && analogRead(A3) < 500 && analogRead(A4) < 500)) 
+  {
+    if (analogRead(A2) > 500 && analogRead(A3) < 500 && analogRead(A4) > 500)  
+{
+      SetMotorY(spd);
+    } 
+    else {
+      SetMotorZ(spd);
+    }
+  }
 }
 
 //String debugstr = String(analogRead(A0)) + ", " + String(analogRead(A1)) + ", " + String(analogRead(A2)) + ", " + String(analogRead(A3)) + ", " + String(analogRead(A4)) + ", " + String(analogRead(A5));
@@ -127,7 +139,6 @@ void MoveYuntilT(int spd){
   SetMotorY(spd);
   while (!(analogRead(A2) < 500 && analogRead(A3) < 500 && analogRead(A4) < 500)) {}
   SetMotorY(0);
-  
 }
 
 void loop(){} 

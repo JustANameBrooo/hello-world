@@ -32,7 +32,7 @@
 #define RitzUp 50
 #define RitzDown 180
 
-#define SPEED 255 //motor in 
+#define SPEED 230 //motor in 
 
 #include <Servo.h>
 Servo ServoR;
@@ -58,8 +58,8 @@ void setup()
   pinMode(A5,INPUT_PULLUP);
   Serial.begin(115200);
 
-  linetracking(230);
-  MoveYuntilT(255);
+  linetracking(170);
+  MoveYuntilT(170);
 
   ServoR.attach (12);
   ServoL.attach (13);
@@ -70,10 +70,8 @@ void setup()
   RitzBoxAngle(RitzDown);
   delay(2000);
   
-  linetracking(230);
-  MoveYuntilT(255);
-
-
+  linetracking(170);
+  MoveYuntilT(170);
 
   }
 
@@ -106,29 +104,32 @@ void SetMotorY(int signedPower){
 //SetMotorZ for A3>500 cos SetMotorZ means both wheels go opposite direction meaning that robot will turn
 void SetMotorZ(int signedPower){
   SetMotorL(signedPower);
-  SetMotorR(-1*signedPower);
+  SetMotorR(-1 * signedPower);
+}
+
+void SetMotorW(int signedPower){
+  SetMotorL(-1 * signedPower);
+  SetMotorR(signedPower);
 }
 
 //A3>500 means red light on means NOT ON black line, A3<500 means red light ON black line
 
 
 void linetracking(int spd){
-  while (!(analogRead(A2) < 500 && analogRead(A3) < 500 && analogRead(A4) < 500)) 
-  {
-    if (analogRead(A2) > 500 && analogRead(A3) < 500 && analogRead(A4) > 500)  
+  while (!(analogRead(A2) < 500 && analogRead(A3) < 500 && analogRead(A4) < 500) )
 {
-      SetMotorY(spd);
-    } 
-    else {
-      SetMotorZ(spd);
-    }
-  }
+    if (analogRead(A3) < 500)  
+    {SetMotorY(spd);} 
+    else if (analogRead(A2) < 500 && analogRead(A3) > 500 && analogRead(A4) > 500)
+    {SetMotorW(spd);}
+    else if (analogRead(A2) > 500 && analogRead(A3) > 500 && analogRead(A4) < 500)
+    {SetMotorZ(spd);}    
 }
+}
+
 
 //String debugstr = String(analogRead(A0)) + ", " + String(analogRead(A1)) + ", " + String(analogRead(A2)) + ", " + String(analogRead(A3)) + ", " + String(analogRead(A4)) + ", " + String(analogRead(A5));
 //Serial.println(debugstr);
-
-    
 
 void RitzBoxAngle(int deg){
   ServoL.write(deg);

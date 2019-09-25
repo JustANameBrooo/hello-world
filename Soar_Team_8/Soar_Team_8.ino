@@ -21,7 +21,7 @@
 #define RightDirectPin1 3 // Right Motor direction pin 1 to MODEL-X IN1 
 #define RightDirectPin2 5 // Right Motor direction pin 2 to MODEL-X IN2  
 #define LeftDirectPin1 6 // Left Motor direction pin 1 to MODEL-X IN3 
-#define LeftDirectPin2 9 //Left Motor direction pin 1 to MODEL-X IN4
+#define LeftDirectPin2 11 //Left Motor direction pin 1 to MODEL-X IN4
 
 /*From left to right, connect to D3,A1-A5 ,D10*/
 #define LFSensor_2 A2 
@@ -30,9 +30,9 @@
 
 
 #define RitzUp 50
-#define RitzDown 180
+#define RitzDown 90
 
-#define SPEED 230 //motor in 
+#define SPEED 255 //motor in 
 
 #include <Servo.h>
 Servo ServoR;
@@ -40,7 +40,8 @@ Servo ServoL;
 
 void RitzBoxAngle(int deg);
 void MoveYuntilT(int spd);
-
+void turnleft(int spd);
+void turnright(int spd);
 
 void setup() 
 {
@@ -63,13 +64,19 @@ void setup()
 
   ServoR.attach (12);
   ServoL.attach (13);
- 
+  
   delay(2000);
   RitzBoxAngle(RitzUp);
   delay(2000);
   RitzBoxAngle(RitzDown);
   delay(2000);
-  
+
+
+  turnleft(200);
+  delay(500);
+  turnright(200);
+  delay(200);
+
   linetracking(170);
   MoveYuntilT(170);
 
@@ -101,16 +108,20 @@ void SetMotorY(int signedPower){
   SetMotorR(signedPower);
 }
 
-//SetMotorZ for A3>500 cos SetMotorZ means both wheels go opposite direction meaning that robot will turn
+//SetMotorZ for A3>500 cos SetMotorZ means both wheels go opposite direction meaning that robot will turn right
 void SetMotorZ(int signedPower){
   SetMotorL(signedPower);
-  SetMotorR(-1 * signedPower);
+  SetMotorR(0);
 }
 
+
+//SetMotorW for A3>500 cos SetMotorW means both wheels go opposite direction meaning that robot will turn left
 void SetMotorW(int signedPower){
-  SetMotorL(-1 * signedPower);
+  SetMotorL(0);
   SetMotorR(signedPower);
 }
+
+
 
 //A3>500 means red light on means NOT ON black line, A3<500 means red light ON black line
 
@@ -127,6 +138,15 @@ void linetracking(int spd){
 }
 }
 
+void turnleft(int spd){
+while ((analogRead(A2) < 500 && analogRead(A3) < 500 && analogRead(A4) < 500) or (analogRead(A2) > 500 && analogRead(A3) > 500 && analogRead(A4) > 500))
+{SetMotorW(spd);}
+}
+
+void turnright(int spd){
+while ((analogRead(A2) < 500 && analogRead(A3) < 500 && analogRead(A4) < 500) or (analogRead(A2) > 500 && analogRead(A3) > 500 && analogRead(A4) > 500))
+{SetMotorZ(spd);}
+}
 
 //String debugstr = String(analogRead(A0)) + ", " + String(analogRead(A1)) + ", " + String(analogRead(A2)) + ", " + String(analogRead(A3)) + ", " + String(analogRead(A4)) + ", " + String(analogRead(A5));
 //Serial.println(debugstr);

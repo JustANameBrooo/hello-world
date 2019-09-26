@@ -30,7 +30,7 @@
 
 
 #define RitzUp 50
-#define RitzDown 90
+#define RitzDown 140
 
 #define SPEED 255 //motor in 
 
@@ -59,8 +59,8 @@ void setup()
   pinMode(A5,INPUT_PULLUP);
   Serial.begin(115200);
 
-  linetracking(170);
-  MoveYuntilT(170);
+  linetracking(160);
+  MoveYuntilT(160);
 
   ServoR.attach (12);
   ServoL.attach (13);
@@ -73,12 +73,12 @@ void setup()
 
 
   turnleft(200);
-  delay(500);
+  delay(700);
   turnright(200);
   delay(200);
 
-  linetracking(170);
-  MoveYuntilT(170);
+  linetracking(160);
+  MoveYuntilT(160);
 
   }
 
